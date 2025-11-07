@@ -1,52 +1,42 @@
-// 1. Create a Binary Tree and Perform Preorder, Inorder, and Postorder Traversals
-
+// Implement a Queue using an Array
 #include <stdio.h>
-#include <stdlib.h>
+#define MAX 5
 
-struct Node {
-    int data;
-    struct Node *left, *right;
-};
+int queue[MAX];
+int front = -1, rear = -1;
 
-struct Node* create(int val) {
-    struct Node* n = malloc(sizeof(struct Node));
-    n->data = val;
-    n->left = n->right = NULL;
-    return n;
-}
-
-void preorder(struct Node* root) {
-    if (root) {
-        printf("%d ", root->data);
-        preorder(root->left);
-        preorder(root->right);
+void enqueue(int x) {
+    if (rear == MAX - 1)
+        printf("Queue Overflow\n");
+    else {
+        if (front == -1) front = 0;
+        queue[++rear] = x;
     }
 }
 
-void inorder(struct Node* root) {
-    if (root) {
-        inorder(root->left);
-        printf("%d ", root->data);
-        inorder(root->right);
-    }
+void dequeue() {
+    if (front == -1 || front > rear)
+        printf("Queue Underflow\n");
+    else
+        printf("Deleted: %d\n", queue[front++]);
 }
 
-void postorder(struct Node* root) {
-    if (root) {
-        postorder(root->left);
-        postorder(root->right);
-        printf("%d ", root->data);
+void display() {
+    if (front == -1)
+        printf("Queue is Empty\n");
+    else {
+        printf("Queue: ");
+        for (int i = front; i <= rear; i++)
+            printf("%d ", queue[i]);
+        printf("\n");
     }
 }
 
 int main() {
-    struct Node* root = create(1);
-    root->left = create(2);
-    root->right = create(3);
-    root->left->left = create(4);
-    root->left->right = create(5);
-
-    printf("Preorder: "); preorder(root);
-    printf("\nInorder: "); inorder(root);
-    printf("\nPostorder: "); postorder(root);
+    enqueue(10);
+    enqueue(20);
+    enqueue(30);
+    display();
+    dequeue();
+    display();
 }

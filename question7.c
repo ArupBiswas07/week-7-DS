@@ -1,38 +1,32 @@
-// 7. Write a program to count leaf nodes and non-leaf nodes
-
+// Reverse First K Elements of a Queue
 #include <stdio.h>
-#include <stdlib.h>
+#define MAX 10
 
-struct Node {
-    int data;
-    struct Node *left, *right;
-};
+int q[MAX], front = 0, rear = -1, size = 0;
 
-struct Node* create(int v) {
-    struct Node* n = malloc(sizeof(struct Node));
-    n->data = v;
-    n->left = n->right = NULL;
-    return n;
+void enqueue(int x) { q[++rear] = x; size++; }
+int dequeue() { size--; return q[front++]; }
+
+void reverseK(int k) {
+    if (k > size) return;
+    int stack[MAX], top = -1;
+    for (int i = 0; i < k; i++) stack[++top] = dequeue();
+    int temp[MAX], j = 0;
+    while (top != -1) temp[j++] = stack[top--];
+    while (size--) temp[j++] = dequeue();
+    front = 0; rear = -1; size = 0;
+    for (int i = 0; i < j; i++) enqueue(temp[i]);
 }
 
-int countLeaf(struct Node* root) {
-    if (!root) return 0;
-    if (!root->left && !root->right) return 1;
-    return countLeaf(root->left) + countLeaf(root->right);
-}
-
-int countNonLeaf(struct Node* root) {
-    if (!root || (!root->left && !root->right)) return 0;
-    return 1 + countNonLeaf(root->left) + countNonLeaf(root->right);
+void display() {
+    printf("Queue: ");
+    for (int i = front; i <= rear; i++) printf("%d ", q[i]);
+    printf("\n");
 }
 
 int main() {
-    struct Node* root = create(1);
-    root->left = create(2);
-    root->right = create(3);
-    root->left->left = create(4);
-    root->left->right = create(5);
-
-    printf("Leaf nodes = %d\n", countLeaf(root));
-    printf("Non-leaf nodes = %d\n", countNonLeaf(root));
+    for (int i = 1; i <= 5; i++) enqueue(i);
+    display();
+    reverseK(3);
+    display();
 }

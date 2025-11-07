@@ -1,36 +1,34 @@
-// 4. Find Minimum and Maximum in a BST
+// Check Queue Overflow and Underflow
 
 #include <stdio.h>
-#include <stdlib.h>
+#define MAX 3
 
-struct Node { int data; struct Node *left, *right; };
+int q[MAX];
+int front = -1, rear = -1;
 
-struct Node* newNode(int v) {
-    struct Node* n = malloc(sizeof(struct Node));
-    n->data = v; n->left = n->right = NULL;
-    return n;
+int isFull() { return rear == MAX - 1; }
+int isEmpty() { return front == -1 || front > rear; }
+
+void enqueue(int x) {
+    if (isFull()) printf("Queue Overflow\n");
+    else {
+        if (front == -1) front = 0;
+        q[++rear] = x;
+    }
 }
 
-struct Node* insert(struct Node* root, int v) {
-    if (!root) return newNode(v);
-    if (v < root->data) root->left = insert(root->left, v);
-    else root->right = insert(root->right, v);
-    return root;
-}
-
-int findMin(struct Node* root) {
-    while (root->left) root = root->left;
-    return root->data;
-}
-
-int findMax(struct Node* root) {
-    while (root->right) root = root->right;
-    return root->data;
+void dequeue() {
+    if (isEmpty()) printf("Queue Underflow\n");
+    else printf("Deleted: %d\n", q[front++]);
 }
 
 int main() {
-    struct Node* root = NULL;
-    root = insert(root, 50); insert(root, 30); insert(root, 70);
-    printf("Min: %d\n", findMin(root));
-    printf("Max: %d\n", findMax(root));
+    enqueue(10);
+    enqueue(20);
+    enqueue(30);
+    enqueue(40);  // Overflow
+    dequeue();
+    dequeue();
+    dequeue();
+    dequeue();    // Underflow
 }

@@ -1,80 +1,52 @@
-// Delete a Node from BST
-
+// Implement a Circular Queue using Array
 #include <stdio.h>
-#include <stdlib.h>
+#define MAX 5
 
-struct Node {
-    int data;
-    struct Node *left, *right;
-};
+int cq[MAX];
+int front = -1, rear = -1;
 
-struct Node* newNode(int v) {
-    struct Node* n = malloc(sizeof(struct Node));
-    n->data = v;
-    n->left = n->right = NULL;
-    return n;
-}
+int isFull() { return (rear + 1) % MAX == front; }
+int isEmpty() { return front == -1; }
 
-struct Node* insert(struct Node* root, int v) {
-    if (!root) return newNode(v);
-    if (v < root->data) root->left = insert(root->left, v);
-    else root->right = insert(root->right, v);
-    return root;
-}
-
-struct Node* findMin(struct Node* root) {
-    while (root && root->left)
-        root = root->left;
-    return root;
-}
-
-struct Node* delete(struct Node* root, int key) {
-    if (!root) return NULL;
-    if (key < root->data)
-        root->left = delete(root->left, key);
-    else if (key > root->data)
-        root->right = delete(root->right, key);
+void enqueue(int x) {
+    if (isFull()) printf("Queue Overflow\n");
     else {
-        if (!root->left) {
-            struct Node* temp = root->right;
-            free(root);
-            return temp;
-        }
-        else if (!root->right) {
-            struct Node* temp = root->left;
-            free(root);
-            return temp;
-        }
-        struct Node* temp = findMin(root->right);
-        root->data = temp->data;
-        root->right = delete(root->right, temp->data);
+        if (front == -1) front = 0;
+        rear = (rear + 1) % MAX;
+        cq[rear] = x;
     }
-    return root;
 }
 
-void inorder(struct Node* root) {
-    if (root) {
-        inorder(root->left);
-        printf("%d ", root->data);
-        inorder(root->right);
+void dequeue() {
+    if (isEmpty()) printf("Queue Underflow\n");
+    else {
+        printf("Deleted: %d\n", cq[front]);
+        if (front == rear) front = rear = -1;
+        else front = (front + 1) % MAX;
+    }
+}
+
+void display() {
+    if (isEmpty()) printf("Queue Empty\n");
+    else {
+        printf("Circular Queue: ");
+        int i = front;
+        while (1) {
+            printf("%d ", cq[i]);
+            if (i == rear) break;
+            i = (i + 1) % MAX;
+        }
+        printf("\n");
     }
 }
 
 int main() {
-    struct Node* root = NULL;
-    root = insert(root, 50);
-    insert(root, 30);
-    insert(root, 70);
-    insert(root, 20);
-    insert(root, 40);
-    insert(root, 60);
-    insert(root, 80);
-
-    printf("Inorder before deletion: ");
-    inorder(root);
-
-    root = delete(root, 70);
-
-    printf("\nInorder after deleting 70: ");
-    inorder(root);
+    enqueue(10);
+    enqueue(20);
+    enqueue(30);
+    display();
+    dequeue();
+    enqueue(40);
+    enqueue(50);
+    display();
 }
